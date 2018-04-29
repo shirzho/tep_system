@@ -3,6 +3,18 @@ class ApplicationController < ActionController::Base
 
   private
   # Handling authentication
+
+  rescue_from CanCan::AccessDenied do |exception|
+    flash[:error] = "Sorry! You don't have access to this page :("
+    redirect_to home_path
+  end
+
+  # handle 404 errors with an exception as well
+  rescue_from ActiveRecord::RecordNotFound do |exception|
+    flash[:error] = "Oops! sorry but somehow you hit a 404 error :/"
+    redirect_to home_path
+  end
+
   def current_user
     @current_user ||= User.find(session[:user_id]) if session[:user_id]
   end
